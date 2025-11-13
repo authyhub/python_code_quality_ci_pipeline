@@ -27,7 +27,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup
-      - run: uv run pyright .
+      - run: uvx pyright .
+    
   tests:
     runs-on: ubuntu-latest
     needs: [lock_file]

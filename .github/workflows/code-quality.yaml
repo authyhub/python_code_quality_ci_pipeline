@@ -5,8 +5,45 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install uv
-        uses: astral-sh/setup-uv@v3
+      - uses: ./.github/actions/setup
+      - run: uv lock --locked
+  linting:
+    runs-on: ubuntu-latest
+    needs: [lock_file]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: uvx ruff check .
+  formatting:
+    runs-on: ubuntu-latest
+    needs: [lock_file]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: uvx ruff format --check .
+  type_consistency:
+    runs-on: ubuntu-latest
+    needs: [lock_file]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: uvx run pyright .
+  tests:
+    runs-on: ubuntu-latest
+    needs: [lock_file]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: uv run pytest tests -v --durations=0 --cov --cov-report=xml
+      - name: Upload code coverage to codecov
+        uses: codecov/codecov-action@v4
         with:
-          version: '0.4.19'
-      - run: uv locked --locked
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [linting, formatting, type_consistency, tests]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: uv build

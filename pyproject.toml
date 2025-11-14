@@ -3,13 +3,9 @@ name = "python-code-quality-ci-pipeline"
 version = "0.1.0"
 description = "Python Code Quality"
 readme = "README.md"
-authors = [
-    { name = "superuser", email = "mymail@maila.com" }
-]
 requires-python = ">=3.13"
 dependencies = [
     "pytest>=9.0.1",
-    "pytest-cov>=7.0.0",
 ]
 
 [project.scripts]
@@ -23,4 +19,5 @@ build-backend = "uv_build"
 dev = [
     "pyright>=1.1.407",
     "pytest>=9.0.1",
+    "pytest-cov>=7.0.0",
 ]
